@@ -107,16 +107,21 @@ public class BrokerStartup {
                 System.exit(-1);
             }
 
+            //用来封装其绝大多数基本配置信息
             final BrokerConfig brokerConfig = new BrokerConfig();
-            //
+
+            //封装了其作为对外暴露的消息队列服务器的信息
             final NettyServerConfig nettyServerConfig = new NettyServerConfig();
+            //封装了其作为NameServer客户端的信息
             final NettyClientConfig nettyClientConfig = new NettyClientConfig();
 
             nettyClientConfig.setUseTLS(Boolean.parseBoolean(System.getProperty(TLS_ENABLE,
                 String.valueOf(TlsSystemConfig.tlsMode == TlsMode.ENFORCING))));
             nettyServerConfig.setListenPort(10911);
+            //创建一个MessageStoreConfig，用来封装store信息
             final MessageStoreConfig messageStoreConfig = new MessageStoreConfig();
 
+            //若是slave，则调整允许消息最大的内存占比为30，默认为为40
             if (BrokerRole.SLAVE == messageStoreConfig.getBrokerRole()) {
                 int ratio = messageStoreConfig.getAccessMessageInMemoryMaxRatio() - 10;
                 messageStoreConfig.setAccessMessageInMemoryMaxRatio(ratio);
