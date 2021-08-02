@@ -117,27 +117,30 @@ public class DefaultMessageStoreTest {
 
     @Test
     public void testWriteAndRead() {
-        long ipv4HostMsgs = 10;
-        long ipv6HostMsgs = 10;
-        long totalMsgs = ipv4HostMsgs + ipv6HostMsgs;
-        QUEUE_TOTAL = 1;
+        long totalMsgs = 1000;
+        QUEUE_TOTAL = 2;
         MessageBody = StoreMessage.getBytes();
-        for (long i = 0; i < ipv4HostMsgs; i++) {
+        /*for (long i = 0; i < ipv4HostMsgs; i++) {
             messageStore.putMessage(buildMessage());
         }
 
         for (long i = 0; i < ipv6HostMsgs; i++) {
             messageStore.putMessage(buildIPv6HostMessage());
+        }*/
+        for (long i=0; i<totalMsgs; i++) {
+            messageStore.putMessage(buildMessage());
         }
 
-        StoreTestUtil.waitCommitLogReput((DefaultMessageStore) messageStore);
+        System.out.println("结束==========");
+        /*StoreTestUtil.waitCommitLogReput((DefaultMessageStore) messageStore);
 
         for (long i = 0; i < totalMsgs; i++) {
-            GetMessageResult result = messageStore.getMessage("GROUP_A", "TOPIC_A", 0, i, 1024 * 1024, null);
+            GetMessageResult result = messageStore.getMessage("GROUP_A", "FooBar", 0, i, 1024 * 1024, null);
             assertThat(result).isNotNull();
+            System.out.println("result"+result.toString());
             result.release();
         }
-        verifyThatMasterIsFunctional(totalMsgs, messageStore);
+        verifyThatMasterIsFunctional(totalMsgs, messageStore);*/
     }
 
     @Test
