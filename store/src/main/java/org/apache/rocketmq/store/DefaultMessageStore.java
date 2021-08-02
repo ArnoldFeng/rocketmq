@@ -66,30 +66,42 @@ import org.apache.rocketmq.store.stats.BrokerStatsManager;
 public class DefaultMessageStore implements MessageStore {
     private static final InternalLogger log = InternalLoggerFactory.getLogger(LoggerName.STORE_LOGGER_NAME);
 
+    //存储配置
     private final MessageStoreConfig messageStoreConfig;
     // CommitLog
     private final CommitLog commitLog;
 
+    //消费队列信息
     private final ConcurrentMap<String/* topic */, ConcurrentMap<Integer/* queueId */, ConsumeQueue>> consumeQueueTable;
 
+    //ConsumeQueue刷盘
     private final FlushConsumeQueueService flushConsumeQueueService;
 
+    //清理CommitLog
     private final CleanCommitLogService cleanCommitLogService;
 
+    //清理ConsumeQueue
     private final CleanConsumeQueueService cleanConsumeQueueService;
 
+    //消息索引服务
     private final IndexService indexService;
 
+    //新建MappedFile服务
     private final AllocateMappedFileService allocateMappedFileService;
 
+    //消息分发服务
     private final ReputMessageService reputMessageService;
 
+    //主从同步高可用
     private final HAService haService;
 
+    //定时消息
     private final ScheduleMessageService scheduleMessageService;
 
+    //统计服务
     private final StoreStatsService storeStatsService;
 
+    //短暂存储池
     private final TransientStorePool transientStorePool;
 
     private final RunningFlags runningFlags = new RunningFlags();
@@ -109,6 +121,7 @@ public class DefaultMessageStore implements MessageStore {
 
     private final LinkedList<CommitLogDispatcher> dispatcherList;
 
+    //文件
     private RandomAccessFile lockFile;
 
     private FileLock lock;
@@ -540,9 +553,11 @@ public class DefaultMessageStore implements MessageStore {
 
     @Override
     public boolean isOSPageCacheBusy() {
+        //putMessage 加锁的时间
         long begin = this.getCommitLog().getBeginTimeInLock();
         long diff = this.systemClock.now() - begin;
 
+        //超过配置时间，则为系统繁忙
         return diff < 10000000
             && diff > this.messageStoreConfig.getOsPageCacheBusyTimeOutMills();
     }

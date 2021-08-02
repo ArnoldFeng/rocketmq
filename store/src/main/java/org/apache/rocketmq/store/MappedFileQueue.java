@@ -193,18 +193,24 @@ public class MappedFileQueue {
 
     public MappedFile getLastMappedFile(final long startOffset, boolean needCreate) {
         long createOffset = -1;
+        //再获取一次最近一个CommitLog文件
         MappedFile mappedFileLast = getLastMappedFile();
 
+        //MappedFiles为空
         if (mappedFileLast == null) {
             createOffset = startOffset - (startOffset % this.mappedFileSize);
         }
 
+        //最近一个CommitLog文件满了
         if (mappedFileLast != null && mappedFileLast.isFull()) {
+            //这里这个offset是所有文件的offset，而不是一个mappedfile的offset
             createOffset = mappedFileLast.getFileFromOffset() + this.mappedFileSize;
         }
 
         if (createOffset != -1 && needCreate) {
+            //构造下一个新的CommitLog文件的路径
             String nextFilePath = this.storePath + File.separator + UtilAll.offset2FileName(createOffset);
+            //构造下下个新的CommitLOg文件的路径
             String nextNextFilePath = this.storePath + File.separator
                 + UtilAll.offset2FileName(createOffset + this.mappedFileSize);
             MappedFile mappedFile = null;

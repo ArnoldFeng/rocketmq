@@ -42,15 +42,22 @@ import org.apache.rocketmq.store.util.LibC;
 import sun.nio.ch.DirectBuffer;
 
 public class MappedFile extends ReferenceResource {
+    //默认页大小
     public static final int OS_PAGE_SIZE = 1024 * 4;
     protected static final InternalLogger log = InternalLoggerFactory.getLogger(LoggerName.STORE_LOGGER_NAME);
 
+    //jvm映射虚拟内存总大小
     private static final AtomicLong TOTAL_MAPPED_VIRTUAL_MEMORY = new AtomicLong(0);
 
+    //jvm中mapped数量
     private static final AtomicInteger TOTAL_MAPPED_FILES = new AtomicInteger(0);
+    //当前写文件位置
     protected final AtomicInteger wrotePosition = new AtomicInteger(0);
+    //当前提交位置
     protected final AtomicInteger committedPosition = new AtomicInteger(0);
+    //当前刷盘的位置
     private final AtomicInteger flushedPosition = new AtomicInteger(0);
+    //文件大小
     protected int fileSize;
     protected FileChannel fileChannel;
     /**
@@ -59,8 +66,11 @@ public class MappedFile extends ReferenceResource {
     protected ByteBuffer writeBuffer = null;
     protected TransientStorePool transientStorePool = null;
     private String fileName;
+    //映射的起始偏移量
     private long fileFromOffset;
+    //映射文件
     private File file;
+    //映射的内存对象
     private MappedByteBuffer mappedByteBuffer;
     private volatile long storeTimestamp = 0;
     private boolean firstCreateInQueue = false;
@@ -158,8 +168,11 @@ public class MappedFile extends ReferenceResource {
         ensureDirOK(this.file.getParent());
 
         try {
+            //获取文件的文件通道，可以访问文件
             this.fileChannel = new RandomAccessFile(this.file, "rw").getChannel();
+            //将文件映射到内存中
             this.mappedByteBuffer = this.fileChannel.map(MapMode.READ_WRITE, 0, fileSize);
+            // 这两个是rocketmq系统的共享静态变量，用来标示虚拟内存使用情况和文件数量
             TOTAL_MAPPED_VIRTUAL_MEMORY.addAndGet(fileSize);
             TOTAL_MAPPED_FILES.incrementAndGet();
             ok = true;
@@ -200,6 +213,7 @@ public class MappedFile extends ReferenceResource {
         assert messageExt != null;
         assert cb != null;
 
+        //当前这个MappedFile的写入位置
         int currentPos = this.wrotePosition.get();
 
         if (currentPos < this.fileSize) {
@@ -213,6 +227,7 @@ public class MappedFile extends ReferenceResource {
             } else {
                 return new AppendMessageResult(AppendMessageStatus.UNKNOWN_ERROR);
             }
+            //刷新写入位置
             this.wrotePosition.addAndGet(result.getWroteBytes());
             this.storeTimestamp = result.getStoreTimestamp();
             return result;
