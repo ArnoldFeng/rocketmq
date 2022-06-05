@@ -180,7 +180,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
             case CREATE_JUST:
                 this.serviceState = ServiceState.START_FAILED;
 
-
+                //检查 groupName 是否合法比如不能为空，是否符合正则 ^[%|a-zA-Z0-9_-]+$，并且最大长度不能超过 255（CHARACTER_MAX_LENGTH = 255）；
                 this.checkConfig();
 
                 if (!this.defaultMQProducer.getProducerGroup().equals(MixAll.CLIENT_INNER_PRODUCER_GROUP)) {
