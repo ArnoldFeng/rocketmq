@@ -78,6 +78,9 @@ public class Validators {
         return matcher.matches();
     }
 
+    /**
+     * 消息校验，如
+     */
     public static void checkMessage(Message msg, DefaultMQProducer defaultMQProducer)
         throws MQClientException {
         if (null == msg) {
