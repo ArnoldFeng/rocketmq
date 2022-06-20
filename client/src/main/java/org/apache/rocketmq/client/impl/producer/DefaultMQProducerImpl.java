@@ -582,6 +582,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
                     mq = mqSelected;
                     brokersSent[times] = mq.getBrokerName();
                     try {
+                        //一次消息发送的开始时间
                         beginTimestampPrev = System.currentTimeMillis();
                         if (times > 0) {
                             //Reset topic with namespace during resend.
@@ -594,6 +595,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
                         }
 
                         sendResult = this.sendKernelImpl(msg, mq, communicationMode, sendCallback, topicPublishInfo, timeout - costTime);
+                        //一次消息发送的结束时间
                         endTimestamp = System.currentTimeMillis();
                         this.updateFaultItem(mq.getBrokerName(), endTimestamp - beginTimestampPrev, false);
                         switch (communicationMode) {
@@ -721,8 +723,11 @@ public class DefaultMQProducerImpl implements MQProducerInner {
         final SendCallback sendCallback,
         final TopicPublishInfo topicPublishInfo,
         final long timeout) throws MQClientException, RemotingException, MQBrokerException, InterruptedException {
+        //发送开始时间
         long beginStartTime = System.currentTimeMillis();
+        //从MQinstance缓存的brokerAddrTable中根据messagequeue中的brokerName获取broker的地址
         String brokerAddr = this.mQClientFactory.findBrokerAddressInPublish(mq.getBrokerName());
+        //地址为null则从nameserver主动更新，依然没有则会抛MQClientException
         if (null == brokerAddr) {
             tryToFindTopicPublishInfo(mq.getTopic());
             brokerAddr = this.mQClientFactory.findBrokerAddressInPublish(mq.getBrokerName());
@@ -747,11 +752,13 @@ public class DefaultMQProducerImpl implements MQProducerInner {
 
                 int sysFlag = 0;
                 boolean msgBodyCompressed = false;
+                //压缩消息体数据，并设置消息的系统标志
                 if (this.tryToCompressMessage(msg)) {
                     sysFlag |= MessageSysFlag.COMPRESSED_FLAG;
                     msgBodyCompressed = true;
                 }
 
+                //事务消息设置其系统标志
                 final String tranMsg = msg.getProperty(MessageConst.PROPERTY_TRANSACTION_PREPARED);
                 if (tranMsg != null && Boolean.parseBoolean(tranMsg)) {
                     sysFlag |= MessageSysFlag.TRANSACTION_PREPARED_TYPE;
@@ -924,6 +931,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
         if (body != null) {
             if (body.length >= this.defaultMQProducer.getCompressMsgBodyOverHowmuch()) {
                 try {
+                    //压缩的等级越高，压缩后体积越小，但耗时会增加
                     byte[] data = UtilAll.compress(body, zipCompressLevel);
                     if (data != null) {
                         msg.setBody(data);

@@ -29,6 +29,7 @@ public class LatencyFaultToleranceImpl implements LatencyFaultTolerance<String> 
 
     private final ThreadLocalIndex whichItemWorst = new ThreadLocalIndex();
 
+    //更新故障项
     @Override
     public void updateFaultItem(final String name, final long currentLatency, final long notAvailableDuration) {
         FaultItem old = this.faultItemTable.get(name);
@@ -48,6 +49,7 @@ public class LatencyFaultToleranceImpl implements LatencyFaultTolerance<String> 
         }
     }
 
+    //判断某个故障项，是否已经可用
     @Override
     public boolean isAvailable(final String name) {
         final FaultItem faultItem = this.faultItemTable.get(name);
@@ -57,11 +59,13 @@ public class LatencyFaultToleranceImpl implements LatencyFaultTolerance<String> 
         return true;
     }
 
+    //移除某个故障项
     @Override
     public void remove(final String name) {
         this.faultItemTable.remove(name);
     }
 
+    //选出故障项
     @Override
     public String pickOneAtLeast() {
         final Enumeration<FaultItem> elements = this.faultItemTable.elements();
