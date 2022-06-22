@@ -73,7 +73,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
+//import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -86,8 +86,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(DefaultMQPushConsumerImpl.class)
+//@RunWith(PowerMockRunner.class)
+//@PrepareForTest(DefaultMQPushConsumerImpl.class)
 public class DefaultMQConsumerWithTraceTest {
     private String consumerGroup;
     private String consumerGroupNormal;
@@ -133,7 +133,7 @@ public class DefaultMQConsumerWithTraceTest {
             }
         });
 
-        PowerMockito.suppress(PowerMockito.method(DefaultMQPushConsumerImpl.class, "updateTopicSubscribeInfoWhenSubscriptionChanged"));
+        //PowerMockito.suppress(PowerMockito.method(DefaultMQPushConsumerImpl.class, "updateTopicSubscribeInfoWhenSubscriptionChanged"));
         DefaultMQPushConsumerImpl pushConsumerImpl = pushConsumer.getDefaultMQPushConsumerImpl();
         rebalancePushImpl = spy(new RebalancePushImpl(pushConsumer.getDefaultMQPushConsumerImpl()));
         Field field = DefaultMQPushConsumerImpl.class.getDeclaredField("rebalanceImpl");

@@ -54,7 +54,7 @@ import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
+//import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,8 +69,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(DefaultLitePullConsumerImpl.class)
+//@RunWith(PowerMockRunner.class)
+//@PrepareForTest(DefaultLitePullConsumerImpl.class)
 public class DefaultLitePullConsumerTest {
     @Spy
     private MQClientInstance mQClientFactory = MQClientManager.getInstance().getOrCreateMQClientInstance(new ClientConfig());
@@ -92,7 +92,7 @@ public class DefaultLitePullConsumerTest {
 
     @Before
     public void init() throws Exception {
-        PowerMockito.suppress(PowerMockito.method(DefaultLitePullConsumerImpl.class, "updateTopicSubscribeInfoWhenSubscriptionChanged"));
+        //PowerMockito.suppress(PowerMockito.method(DefaultLitePullConsumerImpl.class, "updateTopicSubscribeInfoWhenSubscriptionChanged"));
         Field field = MQClientInstance.class.getDeclaredField("rebalanceService");
         field.setAccessible(true);
         RebalanceService rebalanceService = (RebalanceService) field.get(mQClientFactory);

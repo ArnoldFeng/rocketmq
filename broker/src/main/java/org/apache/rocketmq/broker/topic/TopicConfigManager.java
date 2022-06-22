@@ -57,6 +57,14 @@ public class TopicConfigManager extends ConfigManager {
 
     public TopicConfigManager(BrokerController brokerController) {
         this.brokerController = brokerController;
+
+        {
+            String topic = "topic-taotao";
+            TopicConfig topicConfig = new TopicConfig(topic);
+            topicConfig.setReadQueueNums(1);
+            topicConfig.setWriteQueueNums(3);
+            this.topicConfigTable.put(topicConfig.getTopicName(), topicConfig);
+        }
         {
             String topic = TopicValidator.RMQ_SYS_SELF_TEST_TOPIC;
             TopicConfig topicConfig = new TopicConfig(topic);
