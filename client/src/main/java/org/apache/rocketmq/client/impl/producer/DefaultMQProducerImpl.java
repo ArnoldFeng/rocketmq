@@ -87,6 +87,7 @@ import org.apache.rocketmq.common.protocol.header.SendMessageRequestHeader;
 import org.apache.rocketmq.common.sysflag.MessageSysFlag;
 import org.apache.rocketmq.common.utils.CorrelationIdUtil;
 import org.apache.rocketmq.logging.InternalLogger;
+import org.apache.rocketmq.logging.InternalLoggerFactory;
 import org.apache.rocketmq.remoting.RPCHook;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.apache.rocketmq.remoting.exception.RemotingConnectException;
@@ -573,7 +574,8 @@ public class DefaultMQProducerImpl implements MQProducerInner {
             int times = 0;
             //记录每次消息发送的broker
             String[] brokersSent = new String[timesTotal];
-            //采用for循环的方式发送消息
+            //采用for循环的方式重试发送消息
+            System.out.printf("=================");
             for (; times < timesTotal; times++) {
                 //记录上一次发送消息选中的broker
                 String lastBrokerName = null == mq ? null : mq.getBrokerName();
@@ -597,7 +599,8 @@ public class DefaultMQProducerImpl implements MQProducerInner {
                         sendResult = this.sendKernelImpl(msg, mq, communicationMode, sendCallback, topicPublishInfo, timeout - costTime);
                         //一次消息发送的结束时间
                         endTimestamp = System.currentTimeMillis();
-                        this.updateFaultItem(mq.getBrokerName(), endTimestamp - beginTimestampPrev, false);
+                        //此处debug的时候不太好掌控，于是就先注释掉，看宕机情形就可以
+                        //this.updateFaultItem(mq.getBrokerName(), endTimestamp - beginTimestampPrev, false);
                         switch (communicationMode) {
                             case ASYNC:
                                 return null;
@@ -619,6 +622,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
                         this.updateFaultItem(mq.getBrokerName(), endTimestamp - beginTimestampPrev, true);
                         log.warn(String.format("sendKernelImpl exception, resend at once, InvokeID: %s, RT: %sms, Broker: %s", invokeID, endTimestamp - beginTimestampPrev, mq), e);
                         log.warn(msg.toString());
+                        System.out.printf("==========RemotingException");
                         exception = e;
                         continue;
                     } catch (MQClientException e) {
@@ -626,6 +630,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
                         this.updateFaultItem(mq.getBrokerName(), endTimestamp - beginTimestampPrev, true);
                         log.warn(String.format("sendKernelImpl exception, resend at once, InvokeID: %s, RT: %sms, Broker: %s", invokeID, endTimestamp - beginTimestampPrev, mq), e);
                         log.warn(msg.toString());
+                        System.out.printf("==========MQClientException");
                         exception = e;
                         continue;
                     } catch (MQBrokerException e) {

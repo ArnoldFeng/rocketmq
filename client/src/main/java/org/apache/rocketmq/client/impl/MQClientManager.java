@@ -16,6 +16,7 @@
  */
 package org.apache.rocketmq.client.impl;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -62,7 +63,7 @@ public class MQClientManager {
                 log.info("Created new MQClientInstance for clientId:[{}]", clientId);
             }
         }
-
+        System.out.printf("======factoryTable: "+ factoryTable + "\n");
         return instance;
     }
 

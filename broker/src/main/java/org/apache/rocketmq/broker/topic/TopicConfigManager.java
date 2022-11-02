@@ -62,7 +62,7 @@ public class TopicConfigManager extends ConfigManager {
             String topic = "topic-taotao";
             TopicConfig topicConfig = new TopicConfig(topic);
             topicConfig.setReadQueueNums(1);
-            topicConfig.setWriteQueueNums(3);
+            topicConfig.setWriteQueueNums(2);
             this.topicConfigTable.put(topicConfig.getTopicName(), topicConfig);
         }
         {

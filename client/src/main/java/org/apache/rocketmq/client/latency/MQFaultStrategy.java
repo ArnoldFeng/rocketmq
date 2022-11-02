@@ -32,6 +32,8 @@ public class MQFaultStrategy {
 
     //花费时间的列表，从50毫秒到15000毫秒
     private long[] latencyMax = {50L, 100L, 550L, 1000L, 2000L, 3000L, 15000L};
+   // private long[] latencyMax = {5000000000L, 1000000000L, 55000000000L, 10000000000L, 20000000000L, 3000000000L, 15000000000L};
+
     //失效时间列表，从0到600000毫秒
     private long[] notAvailableDuration = {0L, 0L, 30000L, 60000L, 120000L, 180000L, 600000L};
 
@@ -62,7 +64,9 @@ public class MQFaultStrategy {
     public MessageQueue selectOneMessageQueue(final TopicPublishInfo tpInfo, final String lastBrokerName) {
         if (this.sendLatencyFaultEnable) {
             try {
+                System.out.printf("threadLocalIndex  before====" + tpInfo);
                 int index = tpInfo.getSendWhichQueue().getAndIncrement();
+                System.out.printf("threadLocalIndex  after====" + tpInfo);
                 for (int i = 0; i < tpInfo.getMessageQueueList().size(); i++) {
                     int pos = Math.abs(index++) % tpInfo.getMessageQueueList().size();
                     if (pos < 0)
